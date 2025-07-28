@@ -17,7 +17,12 @@ app.get('/', (req, res) => {
 
 // Additional health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Card Game Server is running' });
+  res.json({ status: 'OK', message: 'Card Game Server is running', timestamp: new Date().toISOString() });
+});
+
+// Simple ping endpoint
+app.get('/ping', (req, res) => {
+  res.send('pong');
 });
 
 const io = new Server(server, {
@@ -440,9 +445,15 @@ io.on("connection", (socket) => {
 
 // Connect to database and start server
 connectDB().then(() => {
-  loadScores().then(() => {
-    server.listen(PORT, () => {
-      console.log("Server listening on port " + PORT);
-    });
+  console.log("Database connected successfully");
+  return loadScores();
+}).then(() => {
+  console.log("Scores loaded successfully");
+  server.listen(PORT, () => {
+    console.log("Server listening on port " + PORT);
+    console.log("Health check available at: http://localhost:" + PORT + "/health");
   });
+}).catch((error) => {
+  console.error("Failed to start server:", error);
+  process.exit(1);
 });
