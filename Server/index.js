@@ -443,17 +443,19 @@ io.on("connection", (socket) => {
   });
 });
 
-// Connect to database and start server
-connectDB().then(() => {
-  console.log("Database connected successfully");
-  return loadScores();
-}).then(() => {
-  console.log("Scores loaded successfully");
-  server.listen(PORT, () => {
-    console.log("Server listening on port " + PORT);
-    console.log("Health check available at: http://localhost:" + PORT + "/health");
+// Start server immediately, then connect to database
+server.listen(PORT, () => {
+  console.log("Server listening on port " + PORT);
+  console.log("Health check available at: http://localhost:" + PORT + "/ping");
+  
+  // Connect to database after server starts
+  connectDB().then(() => {
+    console.log("Database connected successfully");
+    return loadScores();
+  }).then(() => {
+    console.log("Scores loaded successfully");
+  }).catch((error) => {
+    console.error("Database connection failed:", error);
+    console.log("Server will continue without database connection");
   });
-}).catch((error) => {
-  console.error("Failed to start server:", error);
-  process.exit(1);
 });
