@@ -29,9 +29,10 @@ console.log("Server starting with CLIENT_URL:", CLIENT_URL);
 
 const io = new Server(server, {
   cors: {
-    origin: [CLIENT_URL, "http://localhost:3000", "https://cardgame-app-slbx.vercel.app"],
-    methods: ["GET", "POST"],
-    credentials: true
+    origin: true, // Allow all origins temporarily for debugging
+    methods: ["GET", "POST", "OPTIONS"],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"]
   }
 });
 
@@ -450,6 +451,7 @@ io.on("connection", (socket) => {
 server.listen(PORT, () => {
   console.log("Server listening on port " + PORT);
   console.log("Health check available at: http://localhost:" + PORT + "/ping");
+  console.log("CORS configured to allow all origins");
   
   // Connect to database after server starts
   connectDB().then(() => {
