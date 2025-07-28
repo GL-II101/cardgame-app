@@ -1,0 +1,14 @@
+{
+  "name": "cardgame-app",
+  "version": "1.0.0",
+  "description": "Card game application with React frontend and Node.js backend",
+  "scripts": {
+    "start": "cd Server && npm start",
+    "install-server": "cd Server && npm install",
+    "install-client": "cd client && npm install",
+    "install-all": "npm run install-server && npm run install-client"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+} 
