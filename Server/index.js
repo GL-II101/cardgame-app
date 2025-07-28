@@ -15,6 +15,11 @@ app.get('/', (req, res) => {
   res.json({ status: 'OK', message: 'Card Game Server is running' });
 });
 
+// Additional health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', message: 'Card Game Server is running' });
+});
+
 const io = new Server(server, {
   cors: {
     origin: CLIENT_URL,
