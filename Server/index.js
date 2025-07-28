@@ -12,6 +12,7 @@ const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 
 console.log("Environment PORT:", process.env.PORT);
 console.log("Using PORT:", PORT);
+console.log("All environment variables:", Object.keys(process.env));
 
 // Health check endpoint for Railway
 app.get('/', (req, res) => {
