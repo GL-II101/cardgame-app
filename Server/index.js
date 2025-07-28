@@ -10,6 +10,9 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 3001;
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 
+console.log("Environment PORT:", process.env.PORT);
+console.log("Using PORT:", PORT);
+
 // Health check endpoint for Railway
 app.get('/', (req, res) => {
   res.json({ status: 'OK', message: 'Card Game Server is running' });

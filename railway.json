@@ -9,8 +9,5 @@
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
-  },
-  "networking": {
-    "port": 8080
   }
 } 
