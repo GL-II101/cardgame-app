@@ -25,10 +25,13 @@ app.get('/ping', (req, res) => {
   res.send('pong');
 });
 
+console.log("Server starting with CLIENT_URL:", CLIENT_URL);
+
 const io = new Server(server, {
   cors: {
-    origin: CLIENT_URL,
-    methods: ["GET", "POST"]
+    origin: [CLIENT_URL, "http://localhost:3000", "https://cardgame-app-slbx.vercel.app"],
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 

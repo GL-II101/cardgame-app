@@ -5,7 +5,21 @@ import './App.css';
 
 // Use environment variable for socket URL, fallback to localhost for development
 const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || "http://localhost:3001";
+console.log("Connecting to socket URL:", SOCKET_URL);
 const socket = io(SOCKET_URL);
+
+// Add connection debugging
+socket.on("connect", () => {
+  console.log("Connected to server with ID:", socket.id);
+});
+
+socket.on("connect_error", (error) => {
+  console.error("Connection error:", error);
+});
+
+socket.on("disconnect", (reason) => {
+  console.log("Disconnected:", reason);
+});
 
 // Helper to sort cards by value and suit
 const cardOrder = {"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,"10":10,J:11,Q:12,K:13,A:14};
