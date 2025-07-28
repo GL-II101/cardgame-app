@@ -4,6 +4,7 @@
   "description": "Card game application with React frontend and Node.js backend",
   "scripts": {
     "start": "cd Server && npm start",
+    "build": "cd Server && npm install",
     "install-server": "cd Server && npm install",
     "install-client": "cd client && npm install",
     "install-all": "npm run install-server && npm run install-client"
