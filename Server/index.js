@@ -26,7 +26,24 @@ app.get('/health', (req, res) => {
 
 // Simple ping endpoint
 app.get('/ping', (req, res) => {
+  console.log('Ping request received');
   res.send('pong');
+});
+
+// Additional health check endpoints
+app.get('/health', (req, res) => {
+  console.log('Health check request received');
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+app.get('/status', (req, res) => {
+  console.log('Status request received');
+  res.json({ 
+    status: 'OK', 
+    port: PORT,
+    clientUrl: CLIENT_URL,
+    timestamp: new Date().toISOString() 
+  });
 });
 
 console.log("Server starting with CLIENT_URL:", CLIENT_URL);
