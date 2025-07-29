@@ -217,29 +217,32 @@ function App() {
   };
 
   return (
-    <div className="p-4 font-sans relative">
-      <div className="absolute top-4 right-4 bg-white border rounded p-4 shadow">
-        <div className="font-bold">Punktestand</div>
-        <div>Jule: {scores.Jule}</div>
-        <div>Finn: {scores.Finn}</div>
-        <button 
-          onClick={() => socket.emit("disconnect_all", { roomId: room })}
-          className="mt-2 bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
-        >
-          Alle Spieler trennen
-        </button>
-      </div>
-      <h1 className="text-xl font-bold">Kartenspiel</h1>
-      <p>Spieler im Raum: {players}</p>
-      {!playerName || players < 2 ? (
-        <div className="flex flex-col items-center justify-center min-h-screen">
-          <h2 className="text-2xl mb-4">Wer bist du?</h2>
-          <div className="flex gap-4 my-4">
-            <button onClick={() => selectPlayer("Jule")} className="bg-blue-500 text-white p-2 rounded">Jule</button>
-            <button onClick={() => selectPlayer("Finn")} className="bg-green-500 text-white p-2 rounded">Finn</button>
-          </div>
-          {players < 2 && <p className="mt-4 text-lg">Warte auf zweiten Spieler ...</p>}
+    <div className="App">
+      <div className="game-container">
+        <div className="score-panel">
+          <div className="font-bold">Punktestand</div>
+          <div>Jule: {scores.Jule}</div>
+          <div>Finn: {scores.Finn}</div>
+          <button 
+            onClick={() => socket.emit("disconnect_all", { roomId: room })}
+            className="btn btn-danger mt-2"
+          >
+            Alle Spieler trennen
+          </button>
         </div>
+        
+        <h1 className="game-title">Kartenspiel</h1>
+        <p className="message">Spieler im Raum: {players}</p>
+        
+        {!playerName || players < 2 ? (
+          <div className="flex flex-col items-center justify-center">
+            <h2 className="section-title">Wer bist du?</h2>
+            <div className="button-group">
+              <button onClick={() => selectPlayer("Jule")} className="btn btn-primary">Jule</button>
+              <button onClick={() => selectPlayer("Finn")} className="btn btn-success">Finn</button>
+            </div>
+            {players < 2 && <p className="message">Warte auf zweiten Spieler ...</p>}
+          </div>
       ) : (
         <>
           <h2 className="mt-4 text-lg">Nachrichten: {message}</h2>

@@ -39,6 +39,291 @@ code {
 
 .App {
   text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Responsive container */
+.game-container {
+  width: 100%;
+  max-width: 800px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+/* Responsive score panel */
+.score-panel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+/* Responsive card layouts */
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.card {
+  position: relative;
+  margin-top: 0;
+  background: white;
+  border: 2px solid #ccc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card.selected {
+  margin-top: -20px;
+  background: #93c5fd;
+  border: 2px solid #059669;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  transform: scale(1.05);
+}
+
+.card img {
+  width: 100%;
+  height: auto;
+  max-width: 44px;
+  max-height: 60px;
+  object-fit: contain;
+}
+
+/* Responsive buttons */
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin: 15px 0;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+  font-size: 14px;
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+}
+
+.btn-success {
+  background: #10b981;
+  color: white;
+}
+
+.btn-success:hover {
+  background: #059669;
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+}
+
+.btn-purple {
+  background: #8b5cf6;
+  color: white;
+}
+
+.btn-purple:hover {
+  background: #7c3aed;
+  transform: translateY(-2px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive text */
+.game-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 15px 0 10px 0;
+  color: #fff;
+}
+
+.message {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin: 10px 0;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* Responsive pile */
+.pile-container {
+  display: flex;
+  gap: 2px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 10px 0;
+  justify-content: center;
+  max-width: 100%;
+}
+
+.pile-card {
+  display: inline-block;
+  min-width: 36px;
+  max-width: 48px;
+  text-align: center;
+  padding: 8px;
+  margin: 0;
+  background: #e5e7eb;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-weight: normal;
+  box-shadow: none;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.pile-card.top {
+  background: #93c5fd;
+  border: 2px solid #059669;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .App {
+    padding: 10px;
+  }
+  
+  .game-container {
+    padding: 15px;
+    margin: 10px;
+  }
+  
+  .score-panel {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-bottom: 15px;
+    width: 100%;
+    max-width: none;
+  }
+  
+  .game-title {
+    font-size: 1.5rem;
+  }
+  
+  .section-title {
+    font-size: 1rem;
+  }
+  
+  .cards-container {
+    gap: 4px;
+  }
+  
+  .card {
+    min-width: 36px;
+    min-height: 48px;
+    padding: 4px;
+  }
+  
+  .card img {
+    max-width: 36px;
+    max-height: 48px;
+  }
+  
+  .button-group {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn {
+    width: 100%;
+    max-width: 200px;
+  }
+  
+  .pile-container {
+    gap: 1px;
+  }
+  
+  .pile-card {
+    min-width: 32px;
+    max-width: 40px;
+    padding: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-container {
+    padding: 10px;
+  }
+  
+  .card {
+    min-width: 32px;
+    min-height: 44px;
+  }
+  
+  .card img {
+    max-width: 32px;
+    max-height: 44px;
+  }
+  
+  .pile-card {
+    min-width: 28px;
+    max-width: 36px;
+    padding: 4px;
+  }
 }
 
 .App-logo {
