@@ -132,6 +132,18 @@ function App() {
     socket.on("quads_removed", (removed) => {
       setMessage(`Vierling${removed.length > 1 ? 'e' : ''} ${removed.join(', ')} wurde${removed.length > 1 ? 'n' : ''} aus dem Spiel entfernt!`);
     });
+
+    socket.on("room_full", (message) => {
+      setMessage(message);
+    });
+
+    socket.on("force_disconnect", (message) => {
+      setMessage(message);
+      // Reload the page after 2 seconds
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    });
   }, [room]);
 
   const selectPlayer = (name) => {
@@ -210,6 +222,12 @@ function App() {
         <div className="font-bold">Punktestand</div>
         <div>Jule: {scores.Jule}</div>
         <div>Finn: {scores.Finn}</div>
+        <button 
+          onClick={() => socket.emit("disconnect_all", { roomId: room })}
+          className="mt-2 bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+        >
+          Alle Spieler trennen
+        </button>
       </div>
       <h1 className="text-xl font-bold">Kartenspiel</h1>
       <p>Spieler im Raum: {players}</p>

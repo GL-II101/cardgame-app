@@ -190,6 +190,13 @@ io.on("connection", (socket) => {
         log: []
       };
     }
+    
+    // Check if room is full (max 2 players)
+    if (rooms[roomId].players.length >= 2 && !rooms[roomId].players.includes(socket.id)) {
+      socket.emit("room_full", "Raum ist voll (maximal 2 Spieler)");
+      return;
+    }
+    
     if (!rooms[roomId].players.includes(socket.id)) {
       rooms[roomId].players.push(socket.id);
     }
@@ -453,6 +460,58 @@ io.on("connection", (socket) => {
     }
     io.emit("scores_update", scores);
     io.to(Object.keys(rooms)).emit("game_over", { winnerId, winnerName, scores });
+  });
+
+  socket.on("disconnect_all", ({ roomId }) => {
+    console.log("Disconnecting all players from room: " + roomId);
+    const room = rooms[roomId];
+    if (room) {
+      // Disconnect all players in the room
+      room.players.forEach(playerId => {
+        io.to(playerId).emit("force_disconnect", "Alle Spieler wurden getrennt");
+        io.sockets.sockets.get(playerId)?.disconnect();
+      });
+      
+      // Reset room state
+      rooms[roomId] = {
+        players: [],
+        ready: [],
+        deck: [],
+        hands: {},
+        pile: [],
+        turn: 0,
+        discard: [],
+        log: []
+      };
+      
+      io.to(roomId).emit("players_update", 0);
+    }
+  });
+
+  socket.on("disconnect_all", ({ roomId }) => {
+    console.log("Disconnecting all players from room: " + roomId);
+    const room = rooms[roomId];
+    if (room) {
+      // Disconnect all players in the room
+      room.players.forEach(playerId => {
+        io.to(playerId).emit("force_disconnect", "Alle Spieler wurden getrennt");
+        io.sockets.sockets.get(playerId)?.disconnect();
+      });
+      
+      // Reset room state
+      rooms[roomId] = {
+        players: [],
+        ready: [],
+        deck: [],
+        hands: {},
+        pile: [],
+        turn: 0,
+        discard: [],
+        log: []
+      };
+      
+      io.to(roomId).emit("players_update", 0);
+    }
   });
 
   socket.on("disconnect", () => {
