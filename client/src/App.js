@@ -262,7 +262,7 @@ function App() {
                 <div className="flex gap-2">
                   {faceUp.map((card, index) => (
                     <div key={index} className="border p-2 bg-yellow-200">
-                      <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 36, height: 48}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
+                      <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 90, height: 120}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
                     </div>
                   ))}
                 </div>
@@ -278,8 +278,8 @@ function App() {
                     className="border bg-gray-200"
                     style={{
                       display: 'inline-block',
-                      minWidth: 36,
-                      maxWidth: 48,
+                      minWidth: 90,
+                      maxWidth: 120,
                       textAlign: 'center',
                       padding: '8px',
                       margin: 0,
@@ -290,7 +290,7 @@ function App() {
                       transition: 'all 0.15s',
                     }}
                   >
-                    <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 36, height: 48}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
+                    <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 90, height: 120}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
                   </div>
                 ))}
               </div>
@@ -324,7 +324,7 @@ function App() {
                         cursor: 'pointer',
                       }}
                     >
-                      <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 36, height: 48}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
+                      <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 90, height: 120}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
                     </button>
                   );
                 })}
@@ -337,12 +337,12 @@ function App() {
                         key={idx}
                         onClick={() => setSelectedFaceDownIndex(idx)}
                         style={{
-                          width: 36,
-                          height: 48,
+                          width: 90,
+                          height: 120,
                           background: selectedFaceDownIndex === idx ? '#93c5fd' : '#e5e7eb',
                           border: selectedFaceDownIndex === idx ? '2px solid green' : '1px solid #ccc',
                           borderRadius: 6,
-                          fontSize: 24,
+                          fontSize: 60,
                           cursor: 'pointer',
                           boxShadow: selectedFaceDownIndex === idx ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
                           transition: 'all 0.15s',
