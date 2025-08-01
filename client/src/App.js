@@ -34,7 +34,7 @@ function sortCards(cards) {
 function cardToImg(card) {
   if (!card) return null;
   const suitMap = { '♠': 's', '♥': 'h', '♦': 'd', '♣': 'c' };
-  return `/cards/${card.value}_${suitMap[card.suit]}.webp`;
+  return `/cards/${card.value}_${suitMap[card.suit]}.png`;
 }
 
 function App() {
@@ -243,157 +243,158 @@ function App() {
             </div>
             {players < 2 && <p className="message">Warte auf zweiten Spieler ...</p>}
           </div>
-      ) : (
-        <>
-          <h2 className="mt-4 text-lg">Nachrichten: {message}</h2>
+        ) : (
+          <>
+            <h2 className="mt-4 text-lg">Nachrichten: {message}</h2>
 
-          <div className="mt-4">
-            <h3 className="font-semibold">Verdeckte Karten</h3>
-            <div className="flex gap-2">
-              {faceDown.map((_, index) => (
-                <div key={index} className="border p-2 bg-gray-300">🂠</div>
-              ))}
-            </div>
-          </div>
-        
-          {faceUp.length > 0 && (
             <div className="mt-4">
-              <h3 className="font-semibold">Offene Karten</h3>
+              <h3 className="font-semibold">Verdeckte Karten</h3>
               <div className="flex gap-2">
-                {faceUp.map((card, index) => (
-                  <div key={index} className="border p-2 bg-yellow-200">
+                {faceDown.map((_, index) => (
+                  <div key={index} className="border p-2 bg-gray-300">🂠</div>
+                ))}
+              </div>
+            </div>
+          
+            {faceUp.length > 0 && (
+              <div className="mt-4">
+                <h3 className="font-semibold">Offene Karten</h3>
+                <div className="flex gap-2">
+                  {faceUp.map((card, index) => (
+                    <div key={index} className="border p-2 bg-yellow-200">
+                      <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 36, height: 48}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="mt-4">
+              <h3 className="font-semibold">Aktueller Stapel ({pile.length} Karten)</h3>
+              <div className="flex gap-2 flex-row items-end" style={{ alignItems: 'flex-end', width: 'auto', flexWrap: 'nowrap', overflowX: 'auto' }}>
+                {pile.map((card, index) => (
+                  <div
+                    key={index}
+                    className="border bg-gray-200"
+                    style={{
+                      display: 'inline-block',
+                      minWidth: 36,
+                      maxWidth: 48,
+                      textAlign: 'center',
+                      padding: '8px',
+                      margin: 0,
+                      background: index === pile.length - 1 ? '#93c5fd' : '#e5e7eb',
+                      border: index === pile.length - 1 ? '2px solid green' : '1px solid #ccc',
+                      fontWeight: index === pile.length - 1 ? 'bold' : 'normal',
+                      boxShadow: index === pile.length - 1 ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
+                      transition: 'all 0.15s',
+                    }}
+                  >
                     <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 36, height: 48}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
                   </div>
                 ))}
               </div>
+              <div className="mt-2 text-sm text-gray-600">Karten im Nachziehstapel: {deckCount}</div>
             </div>
-          )}
 
-          <div className="mt-4">
-            <h3 className="font-semibold">Aktueller Stapel ({pile.length} Karten)</h3>
-            <div className="flex gap-2 flex-row items-end" style={{ alignItems: 'flex-end', width: 'auto', flexWrap: 'nowrap', overflowX: 'auto' }}>
-              {pile.map((card, index) => (
-                <div
-                  key={index}
-                  className="border bg-gray-200"
-                  style={{
-                    display: 'inline-block',
-                    minWidth: 36,
-                    maxWidth: 48,
-                    textAlign: 'center',
-                    padding: '8px',
-                    margin: 0,
-                    background: index === pile.length - 1 ? '#93c5fd' : '#e5e7eb',
-                    border: index === pile.length - 1 ? '2px solid green' : '1px solid #ccc',
-                    fontWeight: index === pile.length - 1 ? 'bold' : 'normal',
-                    boxShadow: index === pile.length - 1 ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 36, height: 48}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
-                </div>
-              ))}
-            </div>
-            <div className="mt-2 text-sm text-gray-600">Karten im Nachziehstapel: {deckCount}</div>
-          </div>
-
-          <div className="mt-4">
-            <h3 className="font-semibold">Deine Handkarten</h3>
-            <div className="flex gap-2 flex-wrap">
-              {sortCards(hand.length > 0 ? hand : faceUp).map((card, index) => {
-                const isSelected = selectingOpen
-                  ? selectedOpenCards.find(c => c.value === card.value && c.suit === card.suit)
-                  : selectedPlayCards.find(c => c.value === card.value && c.suit === card.suit);
-                return (
-                  <button
-                    key={index}
-                    onClick={() => toggleSelect(card, selectingOpen ? "open" : "play")}
-                    disabled={selectingOpen ? false : (
-                      hand.length === 0 ? false : hand.indexOf(card) === -1
-                    ) || (!turn && !(pile.length === 0 && selectedPlayCards.length > 0 && selectedPlayCards.every(c => c.value === "4")))}
-                    style={{
-                      position: 'relative',
-                      marginTop: isSelected ? '-20px' : '0',
-                      background: isSelected ? '#93c5fd' : 'white', // light blue
-                      border: isSelected ? '2px solid green' : '1px solid #ccc',
-                      boxShadow: isSelected ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
-                      zIndex: isSelected ? 10 : 1,
-                      padding: '8px',
-                      borderRadius: '6px',
-                      transition: 'all 0.15s',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 36, height: 48}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
-                  </button>
-                );
-              })}
-            </div>
-            {hand.length === 0 && faceUp.length === 0 && faceDown.length > 0 && turn && (
-              <div className="flex flex-col items-start mt-4">
-                <div className="flex gap-2 mb-2">
-                  {faceDown.map((_, idx) => (
+            <div className="mt-4">
+              <h3 className="font-semibold">Deine Handkarten</h3>
+              <div className="flex gap-2 flex-wrap">
+                {sortCards(hand.length > 0 ? hand : faceUp).map((card, index) => {
+                  const isSelected = selectingOpen
+                    ? selectedOpenCards.find(c => c.value === card.value && c.suit === card.suit)
+                    : selectedPlayCards.find(c => c.value === card.value && c.suit === card.suit);
+                  return (
                     <button
-                      key={idx}
-                      onClick={() => setSelectedFaceDownIndex(idx)}
+                      key={index}
+                      onClick={() => toggleSelect(card, selectingOpen ? "open" : "play")}
+                      disabled={selectingOpen ? false : (
+                        hand.length === 0 ? false : hand.indexOf(card) === -1
+                      ) || (!turn && !(pile.length === 0 && selectedPlayCards.length > 0 && selectedPlayCards.every(c => c.value === "4")))}
                       style={{
-                        width: 36,
-                        height: 48,
-                        background: selectedFaceDownIndex === idx ? '#93c5fd' : '#e5e7eb',
-                        border: selectedFaceDownIndex === idx ? '2px solid green' : '1px solid #ccc',
-                        borderRadius: 6,
-                        fontSize: 24,
-                        cursor: 'pointer',
-                        boxShadow: selectedFaceDownIndex === idx ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
+                        position: 'relative',
+                        marginTop: isSelected ? '-20px' : '0',
+                        background: isSelected ? '#93c5fd' : 'white', // light blue
+                        border: isSelected ? '2px solid green' : '1px solid #ccc',
+                        boxShadow: isSelected ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
+                        zIndex: isSelected ? 10 : 1,
+                        padding: '8px',
+                        borderRadius: '6px',
                         transition: 'all 0.15s',
+                        cursor: 'pointer',
                       }}
                     >
-                      🂠
+                      <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 36, height: 48}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
                     </button>
-                  ))}
+                  );
+                })}
+              </div>
+              {hand.length === 0 && faceUp.length === 0 && faceDown.length > 0 && turn && (
+                <div className="flex flex-col items-start mt-4">
+                  <div className="flex gap-2 mb-2">
+                    {faceDown.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setSelectedFaceDownIndex(idx)}
+                        style={{
+                          width: 36,
+                          height: 48,
+                          background: selectedFaceDownIndex === idx ? '#93c5fd' : '#e5e7eb',
+                          border: selectedFaceDownIndex === idx ? '2px solid green' : '1px solid #ccc',
+                          borderRadius: 6,
+                          fontSize: 24,
+                          cursor: 'pointer',
+                          boxShadow: selectedFaceDownIndex === idx ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
+                          transition: 'all 0.15s',
+                        }}
+                      >
+                        🂠
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={playFaceDown}
+                    className="bg-purple-600 text-white p-2 rounded"
+                    disabled={selectedFaceDownIndex === null}
+                  >
+                    Karte aufdecken
+                  </button>
                 </div>
+              )}
+            </div>
+
+            {selectingOpen ? (
+              <button
+                onClick={confirmOpenCards}
+                className="mt-4 bg-green-500 text-white p-2 rounded"
+                disabled={selectedOpenCards.length !== 3}
+              >
+                Offene Karten bestätigen
+              </button>
+            ) : (
+              <div className="flex gap-4 mt-4">
                 <button
-                  onClick={playFaceDown}
-                  className="bg-purple-600 text-white p-2 rounded"
-                  disabled={selectedFaceDownIndex === null}
+                  onClick={confirmPlay}
+                  className="bg-blue-600 text-white p-2 rounded"
+                  disabled={
+                    !(turn || (pile.length === 0 && selectedPlayCards.length > 0 && selectedPlayCards.every(c => c.value === "4"))) ||
+                    selectedPlayCards.length === 0
+                  }
                 >
-                  Karte aufdecken
+                  Ausgewählte Karten spielen
+                </button>
+                <button
+                  onClick={pickUpPile}
+                  className="bg-red-600 text-white p-2 rounded"
+                  disabled={!turn || pile.length === 0}
+                >
+                  Stapel aufnehmen
                 </button>
               </div>
             )}
-          </div>
-
-          {selectingOpen ? (
-            <button
-              onClick={confirmOpenCards}
-              className="mt-4 bg-green-500 text-white p-2 rounded"
-              disabled={selectedOpenCards.length !== 3}
-            >
-              Offene Karten bestätigen
-            </button>
-          ) : (
-            <div className="flex gap-4 mt-4">
-              <button
-                onClick={confirmPlay}
-                className="bg-blue-600 text-white p-2 rounded"
-                disabled={
-                  !(turn || (pile.length === 0 && selectedPlayCards.length > 0 && selectedPlayCards.every(c => c.value === "4"))) ||
-                  selectedPlayCards.length === 0
-                }
-              >
-                Ausgewählte Karten spielen
-              </button>
-              <button
-                onClick={pickUpPile}
-                className="bg-red-600 text-white p-2 rounded"
-                disabled={!turn || pile.length === 0}
-              >
-                Stapel aufnehmen
-              </button>
-            </div>
-          )}
-        </>
-      )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
