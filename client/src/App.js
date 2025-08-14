@@ -250,9 +250,9 @@ function App() {
 
             <div className="mt-4">
               <h3 className="font-semibold">Verdeckte Karten</h3>
-              <div className="flex gap-2">
+              <div className="flex gap-2 overflow-x-auto pb-2">
                 {faceDown.map((_, index) => (
-                  <div key={index} className="border p-2 bg-gray-300">🂠</div>
+                  <div key={index} className="border p-2 bg-gray-300 flex-shrink-0" style={{width: 90, height: 120}}>🂠</div>
                 ))}
               </div>
             </div>
@@ -260,9 +260,9 @@ function App() {
             {faceUp.length > 0 && (
               <div className="mt-4">
                 <h3 className="font-semibold">Offene Karten</h3>
-                <div className="flex gap-2">
+                <div className="flex gap-2 overflow-x-auto pb-2">
                   {faceUp.map((card, index) => (
-                    <div key={index} className="border p-2 bg-yellow-200">
+                    <div key={index} className="border p-2 bg-yellow-200 flex-shrink-0">
                       <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 90, height: 120}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
                     </div>
                   ))}
@@ -299,8 +299,8 @@ function App() {
                           Schau dir alle Karten an
                         </button>
                         {showAllPileCards && (
-                          <div className="mt-3 overflow-x-auto">
-                            <div className="flex gap-2" style={{minWidth: 'max-content'}}>
+                          <div className="mt-3 overflow-x-auto pb-2">
+                            <div className="flex gap-2">
                               {pile.slice(0, -1).map((card, index) => (
                                 <div key={index} className="flex-shrink-0">
                                   <img 
@@ -358,7 +358,7 @@ function App() {
 
             <div className="mt-4">
               <h3 className="font-semibold">Deine Handkarten</h3>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 overflow-x-auto pb-2">
                 {sortCards(hand.length > 0 ? hand : faceUp).map((card, index) => {
                   const isSelected = selectingOpen
                     ? selectedOpenCards.find(c => c.value === card.value && c.suit === card.suit)
@@ -381,6 +381,7 @@ function App() {
                         borderRadius: '6px',
                         transition: 'all 0.15s',
                         cursor: 'pointer',
+                        flexShrink: 0,
                       }}
                     >
                       <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 90, height: 120}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
@@ -390,7 +391,7 @@ function App() {
               </div>
               {hand.length === 0 && faceUp.length === 0 && faceDown.length > 0 && turn && (
                 <div className="flex flex-col items-start mt-4">
-                  <div className="flex gap-2 mb-2">
+                  <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
                     {faceDown.map((_, idx) => (
                       <button
                         key={idx}
@@ -405,6 +406,7 @@ function App() {
                           cursor: 'pointer',
                           boxShadow: selectedFaceDownIndex === idx ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
                           transition: 'all 0.15s',
+                          flexShrink: 0,
                         }}
                       >
                         🂠
