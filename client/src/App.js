@@ -250,7 +250,7 @@ function App() {
 
             <div className="mt-4">
               <h3 className="font-semibold">Verdeckte Karten</h3>
-              <div className="flex gap-2 overflow-x-auto pb-2">
+              <div className="flex flex-row gap-2 overflow-x-auto pb-2" style={{flexWrap: 'nowrap'}}>
                 {faceDown.map((_, index) => (
                   <div key={index} className="border p-2 bg-gray-300 flex-shrink-0" style={{width: 90, height: 120}}>🂠</div>
                 ))}
@@ -260,7 +260,7 @@ function App() {
             {faceUp.length > 0 && (
               <div className="mt-4">
                 <h3 className="font-semibold">Offene Karten</h3>
-                <div className="flex gap-2 overflow-x-auto pb-2">
+                <div className="flex flex-row gap-2 overflow-x-auto pb-2" style={{flexWrap: 'nowrap'}}>
                   {faceUp.map((card, index) => (
                     <div key={index} className="border p-2 bg-yellow-200 flex-shrink-0">
                       <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 90, height: 120}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
@@ -300,7 +300,7 @@ function App() {
                         </button>
                         {showAllPileCards && (
                           <div className="mt-3 overflow-x-auto pb-2">
-                            <div className="flex gap-2">
+                            <div className="flex flex-row gap-2" style={{flexWrap: 'nowrap'}}>
                               {pile.slice(0, -1).map((card, index) => (
                                 <div key={index} className="flex-shrink-0">
                                   <img 
@@ -358,7 +358,7 @@ function App() {
 
             <div className="mt-4">
               <h3 className="font-semibold">Deine Handkarten</h3>
-              <div className="flex gap-2 overflow-x-auto pb-2">
+              <div className="flex flex-row gap-2 overflow-x-auto pb-2" style={{flexWrap: 'nowrap'}}>
                 {sortCards(hand.length > 0 ? hand : faceUp).map((card, index) => {
                   const isSelected = selectingOpen
                     ? selectedOpenCards.find(c => c.value === card.value && c.suit === card.suit)
@@ -391,7 +391,7 @@ function App() {
               </div>
               {hand.length === 0 && faceUp.length === 0 && faceDown.length > 0 && turn && (
                 <div className="flex flex-col items-start mt-4">
-                  <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
+                  <div className="flex flex-row gap-2 mb-2 overflow-x-auto pb-2" style={{flexWrap: 'nowrap'}}>
                     {faceDown.map((_, idx) => (
                       <button
                         key={idx}
