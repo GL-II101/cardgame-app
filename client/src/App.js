@@ -55,6 +55,7 @@ function App() {
   const [playerName, setPlayerName] = useState("");
   const [scores, setScores] = useState({ Jule: 0, Finn: 0 });
   const [selectedFaceDownIndex, setSelectedFaceDownIndex] = useState(null);
+  const [showAllPileCards, setShowAllPileCards] = useState(false);
 
   useEffect(() => {
     socket.emit("join_room", room);
@@ -271,28 +272,86 @@ function App() {
 
             <div className="mt-4">
               <h3 className="font-semibold">Aktueller Stapel ({pile.length} Karten)</h3>
-              <div className="flex gap-2 flex-row items-end" style={{ alignItems: 'flex-end', width: 'auto', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                {pile.map((card, index) => (
-                  <div
-                    key={index}
-                    className="border bg-gray-200"
-                    style={{
-                      display: 'inline-block',
-                      minWidth: 90,
-                      maxWidth: 120,
-                      textAlign: 'center',
-                      padding: '8px',
-                      margin: 0,
-                      background: index === pile.length - 1 ? '#93c5fd' : '#e5e7eb',
-                      border: index === pile.length - 1 ? '2px solid green' : '1px solid #ccc',
-                      fontWeight: index === pile.length - 1 ? 'bold' : 'normal',
-                      boxShadow: index === pile.length - 1 ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
-                      transition: 'all 0.15s',
-                    }}
-                  >
-                    <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 90, height: 120}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
+              <div className="flex gap-4">
+                {/* Linker Stapel - Bisherige Karten */}
+                <div className="flex-1">
+                  <div className="bg-gray-200 p-4 rounded-lg">
+                    {pile.length > 1 ? (
+                      <>
+                        <div className="text-center mb-2">
+                          <div className="text-lg font-bold">{pile[pile.length - 2]?.value || ''}</div>
+                          <div className="text-sm text-gray-600">
+                            {pile.filter((card, index) => index < pile.length - 1 && card.value === pile[pile.length - 2]?.value).length} Karten
+                          </div>
+                        </div>
+                        <div className="flex justify-center">
+                          <img 
+                            src={cardToImg(pile[pile.length - 2])} 
+                            alt={pile[pile.length - 2]?.value + pile[pile.length - 2]?.suit} 
+                            style={{width: 90, height: 120}} 
+                            onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=pile[pile.length - 2]?.value+pile[pile.length - 2]?.suit;}} 
+                          />
+                        </div>
+                        <button 
+                          onClick={() => setShowAllPileCards(!showAllPileCards)}
+                          className="w-full mt-2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
+                        >
+                          Schau dir alle Karten an
+                        </button>
+                        {showAllPileCards && (
+                          <div className="mt-3 overflow-x-auto">
+                            <div className="flex gap-2" style={{minWidth: 'max-content'}}>
+                              {pile.slice(0, -1).map((card, index) => (
+                                <div key={index} className="flex-shrink-0">
+                                  <img 
+                                    src={cardToImg(card)} 
+                                    alt={card.value + card.suit} 
+                                    style={{width: 90, height: 120}} 
+                                    onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} 
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="text-center text-gray-500">
+                        <div className="text-lg">Keine Karten</div>
+                        <div className="text-sm">im Stapel</div>
+                      </div>
+                    )}
                   </div>
-                ))}
+                </div>
+
+                {/* Rechter Stapel - Aktuelle Karte */}
+                <div className="flex-1">
+                  <div className="bg-blue-200 p-4 rounded-lg border-2 border-green-500">
+                    {pile.length > 0 ? (
+                      <>
+                        <div className="text-center mb-2">
+                          <div className="text-lg font-bold">{pile[pile.length - 1]?.value || ''}</div>
+                          <div className="text-sm text-gray-600">
+                            {pile.filter(card => card.value === pile[pile.length - 1]?.value).length} Karten
+                          </div>
+                        </div>
+                        <div className="flex justify-center">
+                          <img 
+                            src={cardToImg(pile[pile.length - 1])} 
+                            alt={pile[pile.length - 1]?.value + pile[pile.length - 1]?.suit} 
+                            style={{width: 90, height: 120}} 
+                            onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=pile[pile.length - 1]?.value+pile[pile.length - 1]?.suit;}} 
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center text-gray-500">
+                        <div className="text-lg">Stapel</div>
+                        <div className="text-sm">ist leer</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="mt-2 text-sm text-gray-600">Karten im Nachziehstapel: {deckCount}</div>
             </div>
