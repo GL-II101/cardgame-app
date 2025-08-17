@@ -258,9 +258,13 @@ function App() {
                 
                 {/* Offene Karten */}
                 {faceUp.map((card, index) => (
-                  <div key={`up-${index}`} className="border p-2 bg-yellow-200" style={{flexShrink: 0}}>
-                    <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 90, height: 120}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
-                  </div>
+                  <img 
+                    key={`up-${index}`} 
+                    src={cardToImg(card)} 
+                    alt={card.value + card.suit} 
+                    style={{width: 90, height: 120, flexShrink: 0}} 
+                    onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} 
+                  />
                 ))}
               </div>
             </div>
@@ -297,14 +301,13 @@ function App() {
                           <div className="mt-3 overflow-x-auto pb-2">
                             <div style={{display: 'flex', flexDirection: 'row', gap: '8px', flexWrap: 'nowrap'}}>
                               {pile.slice(0, -1).map((card, index) => (
-                                <div key={index} className="flex-shrink-0">
-                                  <img 
-                                    src={cardToImg(card)} 
-                                    alt={card.value + card.suit} 
-                                    style={{width: 90, height: 120}} 
-                                    onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} 
-                                  />
-                                </div>
+                                <img 
+                                  key={index} 
+                                  src={cardToImg(card)} 
+                                  alt={card.value + card.suit} 
+                                  style={{width: 90, height: 120, flexShrink: 0}} 
+                                  onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} 
+                                />
                               ))}
                             </div>
                           </div>
@@ -368,11 +371,11 @@ function App() {
                       style={{
                         position: 'relative',
                         marginTop: isSelected ? '-20px' : '0',
-                        background: isSelected ? '#93c5fd' : 'white', // light blue
-                        border: isSelected ? '2px solid green' : '1px solid #ccc',
+                        background: 'transparent',
+                        border: isSelected ? '2px solid green' : 'none',
                         boxShadow: isSelected ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
                         zIndex: isSelected ? 10 : 1,
-                        padding: '8px',
+                        padding: 0,
                         borderRadius: '6px',
                         transition: 'all 0.15s',
                         cursor: 'pointer',
