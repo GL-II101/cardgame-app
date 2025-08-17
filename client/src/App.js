@@ -249,26 +249,21 @@ function App() {
             <h2 className="mt-4 text-lg">Nachrichten: {message}</h2>
 
             <div className="mt-4">
-              <h3 className="font-semibold">Verdeckte Karten</h3>
+              <h3 className="font-semibold">Verdeckte & Offene Karten</h3>
               <div style={{display: 'flex', flexDirection: 'row', gap: '8px', overflowX: 'auto', paddingBottom: '8px', flexWrap: 'nowrap'}}>
+                {/* Verdeckte Karten */}
                 {faceDown.map((_, index) => (
-                  <div key={index} className="border p-2 bg-gray-300" style={{width: 90, height: 120, flexShrink: 0}}>🂠</div>
+                  <div key={`down-${index}`} className="border p-2 bg-gray-300" style={{width: 90, height: 120, flexShrink: 0}}>🂠</div>
+                ))}
+                
+                {/* Offene Karten */}
+                {faceUp.map((card, index) => (
+                  <div key={`up-${index}`} className="border p-2 bg-yellow-200" style={{flexShrink: 0}}>
+                    <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 90, height: 120}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
+                  </div>
                 ))}
               </div>
             </div>
-          
-            {faceUp.length > 0 && (
-              <div className="mt-4">
-                <h3 className="font-semibold">Offene Karten</h3>
-                <div style={{display: 'flex', flexDirection: 'row', gap: '8px', overflowX: 'auto', paddingBottom: '8px', flexWrap: 'nowrap'}}>
-                  {faceUp.map((card, index) => (
-                    <div key={index} className="border p-2 bg-yellow-200" style={{flexShrink: 0}}>
-                      <img src={cardToImg(card)} alt={card.value + card.suit} style={{width: 90, height: 120}} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
             <div className="mt-4">
               <h3 className="font-semibold">Aktueller Stapel ({pile.length} Karten)</h3>
