@@ -250,12 +250,23 @@ function App() {
 
             <div className="mt-4">
               <h3 className="font-semibold">Verdeckte & Offene Karten</h3>
-              <div style={{display: 'flex', flexDirection: 'row', gap: '8px', overflowX: 'auto', paddingBottom: '8px', flexWrap: 'nowrap'}}>
+              <div style={{
+                display: 'flex', 
+                flexDirection: 'row', 
+                gap: '8px', 
+                overflowX: 'auto', 
+                paddingBottom: '8px', 
+                flexWrap: 'nowrap',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: '140px',
+                width: '100%'
+              }}>
                 {/* Verdeckte Karten */}
                 {faceDown.map((_, index) => (
                   <img 
                     key={`down-${index}`} 
-                    src="/cards/Backside.png" 
+                    src="/cards/Backsite.png" 
                     alt="Verdeckte Karte" 
                     style={{width: 90, height: 120, flexShrink: 0}} 
                   />
@@ -424,7 +435,7 @@ function App() {
                         }}
                       >
                         <img 
-                          src="/cards/Backside.png" 
+                          src="/cards/Backsite.png" 
                           alt="Verdeckte Karte" 
                           style={{width: 90, height: 120}} 
                         />
