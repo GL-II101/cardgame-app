@@ -253,7 +253,12 @@ function App() {
               <div style={{display: 'flex', flexDirection: 'row', gap: '8px', overflowX: 'auto', paddingBottom: '8px', flexWrap: 'nowrap'}}>
                 {/* Verdeckte Karten */}
                 {faceDown.map((_, index) => (
-                  <div key={`down-${index}`} className="border p-2 bg-gray-300" style={{width: 90, height: 120, flexShrink: 0}}>🂠</div>
+                  <img 
+                    key={`down-${index}`} 
+                    src="/cards/Backside.png" 
+                    alt="Verdeckte Karte" 
+                    style={{width: 90, height: 120, flexShrink: 0}} 
+                  />
                 ))}
                 
                 {/* Offene Karten */}
@@ -397,17 +402,21 @@ function App() {
                         style={{
                           width: 90,
                           height: 120,
-                          background: selectedFaceDownIndex === idx ? '#93c5fd' : '#e5e7eb',
-                          border: selectedFaceDownIndex === idx ? '2px solid green' : '1px solid #ccc',
+                          background: 'transparent',
+                          border: selectedFaceDownIndex === idx ? '2px solid green' : 'none',
                           borderRadius: 6,
-                          fontSize: 60,
                           cursor: 'pointer',
                           boxShadow: selectedFaceDownIndex === idx ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
                           transition: 'all 0.15s',
                           flexShrink: 0,
+                          padding: 0,
                         }}
                       >
-                        🂠
+                        <img 
+                          src="/cards/Backside.png" 
+                          alt="Verdeckte Karte" 
+                          style={{width: 90, height: 120}} 
+                        />
                       </button>
                     ))}
                   </div>
