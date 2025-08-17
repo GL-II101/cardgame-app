@@ -361,7 +361,18 @@ function App() {
 
             <div className="mt-4">
               <h3 className="font-semibold">Deine Handkarten</h3>
-              <div style={{display: 'flex', flexDirection: 'row', gap: '8px', overflowX: 'auto', paddingBottom: '8px', flexWrap: 'nowrap'}}>
+              <div style={{
+                display: 'flex', 
+                flexDirection: 'row', 
+                gap: '8px', 
+                overflowX: 'auto', 
+                paddingBottom: '8px', 
+                flexWrap: 'nowrap',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: '140px',
+                width: '100%'
+              }}>
                 {sortCards(hand.length > 0 ? hand : faceUp).map((card, index) => {
                   const isSelected = selectingOpen
                     ? selectedOpenCards.find(c => c.value === card.value && c.suit === card.suit)
