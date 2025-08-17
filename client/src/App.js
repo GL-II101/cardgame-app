@@ -293,7 +293,7 @@ function App() {
                         </div>
                         <button 
                           onClick={() => setShowAllPileCards(!showAllPileCards)}
-                          className="w-full mt-2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
+                          className="btn btn-primary w-full mt-2"
                         >
                           Schau dir alle Karten an
                         </button>
@@ -413,7 +413,7 @@ function App() {
                   </div>
                   <button
                     onClick={playFaceDown}
-                    className="bg-purple-600 text-white p-2 rounded"
+                    className="btn btn-primary"
                     disabled={selectedFaceDownIndex === null}
                   >
                     Karte aufdecken
@@ -425,7 +425,7 @@ function App() {
             {selectingOpen ? (
               <button
                 onClick={confirmOpenCards}
-                className="mt-4 bg-green-500 text-white p-2 rounded"
+                className="btn btn-success mt-4"
                 disabled={selectedOpenCards.length !== 3}
               >
                 Offene Karten bestätigen
@@ -434,7 +434,7 @@ function App() {
               <div className="flex gap-4 mt-4">
                 <button
                   onClick={confirmPlay}
-                  className="bg-blue-600 text-white p-2 rounded"
+                  className="btn btn-primary"
                   disabled={
                     !(turn || (pile.length === 0 && selectedPlayCards.length > 0 && selectedPlayCards.every(c => c.value === "4"))) ||
                     selectedPlayCards.length === 0
@@ -444,7 +444,7 @@ function App() {
                 </button>
                 <button
                   onClick={pickUpPile}
-                  className="bg-red-600 text-white p-2 rounded"
+                  className="btn btn-danger"
                   disabled={!turn || pile.length === 0}
                 >
                   Stapel aufnehmen
