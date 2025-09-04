@@ -213,6 +213,7 @@ io.on("connection", (socket) => {
       room.log = [];
       room.deck = shuffleDeck();
       room.openReady = [];
+      room.firstMove = true; // Allow either player to start
       room.players.forEach((id) => {
         room.hands[id] = {
           hand: room.deck.splice(0, 6),
@@ -259,7 +260,9 @@ io.on("connection", (socket) => {
         room.hands[pid].mode = "hand";
       });
       io.to(roomId).emit("start_game", room.hands);
-      io.to(room.players[room.turn]).emit("your_turn");
+      // Free start: allow either player to play the very first card
+      room.firstMove = true;
+      io.to(roomId).emit("free_start");
     }
   });
 
@@ -273,7 +276,9 @@ io.on("connection", (socket) => {
     if (room.pile.length === 0 && cards.length > 0 && cards.every(c => c.value === "4")) {
       jumpInWithFour = true;
     }
-    if (!jumpInWithFour && userId !== current) return;
+    // Allow either player to make the very first move if pile is empty
+    const freeStartMove = !!room.firstMove && room.pile.length === 0;
+    if (!jumpInWithFour && !freeStartMove && userId !== current) return;
 
     const playerHand = room.hands[userId];
     // Debug log
@@ -329,6 +334,11 @@ io.on("connection", (socket) => {
     // Determine the last relevant card (ignoring 3s)
     const lastRelevant = [...room.pile].reverse().find(c => c.value !== "3");
     if (!tenPlayed && !pileClearedByQuads) {
+      if (freeStartMove) {
+        // End free start and align turn to the player who just played, then advance
+        room.firstMove = false;
+        room.turn = room.players.indexOf(userId);
+      }
       if (jumpInWithFour) {
         // Set turn to the player who played the 4(s), then advance as normal
         room.turn = room.players.indexOf(userId);

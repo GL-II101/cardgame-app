@@ -56,6 +56,7 @@ function App() {
   const [scores, setScores] = useState({ Jule: 0, Finn: 0 });
   const [selectedFaceDownIndex, setSelectedFaceDownIndex] = useState(null);
   const [showAllPileCards, setShowAllPileCards] = useState(false);
+  const [freeStart, setFreeStart] = useState(false);
 
   useEffect(() => {
     socket.emit("join_room", room);
@@ -83,6 +84,12 @@ function App() {
       setFaceUp(hands[me].faceUp);
       setSelectingOpen(false);
       setMessage("Spiel gestartet. Warte auf den Zug des anderen Spielers");
+      // Server enables free start separately, but initialize to true for safety until first play arrives
+      setFreeStart(true);
+    });
+
+    socket.on("free_start", () => {
+      setFreeStart(true);
     });
 
     socket.on("your_turn", () => {
@@ -92,6 +99,9 @@ function App() {
 
     socket.on("card_played", ({ cards, userId, pile, hand, faceUp, deckCount, revealed, pickedUp }) => {
       setPile(pile);
+      if (pile && pile.length > 0) {
+        setFreeStart(false);
+      }
       setSelectedPlayCards([]);
       if (userId === socket.id && hand) {
         setHand(hand);
@@ -105,7 +115,7 @@ function App() {
       if (userId !== socket.id && cards && cards.length === 0) {
         setMessage("Stapel wurde aufgenommen!");
       } else if (userId !== socket.id && cards && cards.length > 0) {
-        setMessage(`Gegner hat ${cards.map(c => c.value + c.suit).join(", ")} gespielt.`);
+        setMessage(`Gegner hat ${cards.map(c => c.value + c.suit).join(", ") } gespielt.`);
       }
       setDeckCount(deckCount);
     });
@@ -194,7 +204,8 @@ function App() {
   const confirmPlay = () => {
     // Allow playing 4(s) if the pile is empty, even if it's not your turn
     const isJumpInFour = pile.length === 0 && selectedPlayCards.length > 0 && selectedPlayCards.every(c => c.value === "4");
-    if ((!turn && !isJumpInFour) || selectingOpen || selectedPlayCards.length === 0) return;
+    const isFreeStart = freeStart && pile.length === 0;
+    if ((!turn && !isJumpInFour && !isFreeStart) || selectingOpen || selectedPlayCards.length === 0) return;
     const baseCard = selectedPlayCards[0];
     if (selectedPlayCards.some(c => c.value !== baseCard.value)) {
       setMessage("Nur Karten mit gleichem Wert gleichzeitig spielen!");
@@ -384,7 +395,7 @@ function App() {
                       onClick={() => toggleSelect(card, selectingOpen ? "open" : "play")}
                       disabled={selectingOpen ? false : (
                         hand.length === 0 ? false : hand.indexOf(card) === -1
-                      ) || (!turn && !(pile.length === 0 && selectedPlayCards.length > 0 && selectedPlayCards.every(c => c.value === "4")))}
+                      ) || (!turn && !(pile.length === 0 && selectedPlayCards.length > 0 && (selectedPlayCards.every(c => c.value === "4") || freeStart)))}
                       style={{
                         position: 'relative',
                         marginTop: isSelected ? '-20px' : '0',
@@ -457,7 +468,7 @@ function App() {
                   onClick={confirmPlay}
                   className="btn btn-primary"
                   disabled={
-                    !(turn || (pile.length === 0 && selectedPlayCards.length > 0 && selectedPlayCards.every(c => c.value === "4"))) ||
+                    !(turn || (pile.length === 0 && selectedPlayCards.length > 0 && (selectedPlayCards.every(c => c.value === "4") || freeStart))) ||
                     selectedPlayCards.length === 0
                   }
                 >
