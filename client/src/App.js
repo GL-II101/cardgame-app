@@ -220,17 +220,7 @@ function App() {
   return (
     <div className="App">
       <div className="game-container">
-        <div className="score-panel">
-          <div className="font-bold">Punktestand</div>
-          <div>Jule: {scores.Jule}</div>
-          <div>Finn: {scores.Finn}</div>
-          <button 
-            onClick={() => socket.emit("disconnect_all", { roomId: room })}
-            className="btn btn-danger mt-2"
-          >
-            Alle Spieler trennen
-          </button>
-        </div>
+        
         
         <h1 className="game-title">Kartenspiel</h1>
         <p className="message">Spieler im Raum: {players}</p>
