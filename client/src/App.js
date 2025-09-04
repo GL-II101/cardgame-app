@@ -192,8 +192,8 @@ function App() {
   };
 
   const confirmPlay = () => {
-    // Allow playing a 4 if the pile is empty, even if it's not your turn
-    const isJumpInFour = pile.length === 0 && selectedPlayCards.length === 1 && selectedPlayCards[0].value === "4";
+    // Allow playing 4(s) if the pile is empty, even if it's not your turn
+    const isJumpInFour = pile.length === 0 && selectedPlayCards.length > 0 && selectedPlayCards.every(c => c.value === "4");
     if ((!turn && !isJumpInFour) || selectingOpen || selectedPlayCards.length === 0) return;
     const baseCard = selectedPlayCards[0];
     if (selectedPlayCards.some(c => c.value !== baseCard.value)) {
