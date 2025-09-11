@@ -83,9 +83,7 @@ function App() {
       setFaceDown(hands[me].faceDown);
       setFaceUp(hands[me].faceUp);
       setSelectingOpen(false);
-      setMessage("Spiel gestartet. Du kannst die erste Karte legen!");
-      // Server enables free start separately, but initialize to true for safety until first play arrives
-      if (typeof setFreeStart === 'function') setFreeStart(true);
+      setMessage("Spiel gestartet.");
       if (publicState) setOpponents(publicState);
     });
 
@@ -96,9 +94,7 @@ function App() {
 
     socket.on("card_played", ({ cards, userId, pile, hand, faceUp, deckCount, revealed, pickedUp, faceDown, publicState }) => {
       setPile(pile);
-      if (pile && pile.length > 0 && typeof setFreeStart === 'function') {
-        // setFreeStart(false);
-      }
+      // no-op
       setSelectedPlayCards([]);
       if (userId === socket.id && hand) {
         setHand(hand);
