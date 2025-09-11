@@ -56,6 +56,7 @@ function App() {
   const [scores, setScores] = useState({ Jule: 0, Finn: 0 });
   const [selectedFaceDownIndex, setSelectedFaceDownIndex] = useState(null);
   const [showAllPileCards, setShowAllPileCards] = useState(false);
+  const [opponents, setOpponents] = useState({});
 
   useEffect(() => {
     socket.emit("join_room", room);
@@ -76,13 +77,16 @@ function App() {
       setMessage("Wähle 3 offene Karten aus deiner Hand.");
     });
 
-    socket.on("start_game", (hands) => {
+    socket.on("start_game", ({ hands, publicState }) => {
       const me = socket.id;
       setHand(hands[me].hand);
       setFaceDown(hands[me].faceDown);
       setFaceUp(hands[me].faceUp);
       setSelectingOpen(false);
-      setMessage("Spiel gestartet. Warte auf den Zug des anderen Spielers");
+      setMessage("Spiel gestartet. Du kannst die erste Karte legen!");
+      // Server enables free start separately, but initialize to true for safety until first play arrives
+      if (typeof setFreeStart === 'function') setFreeStart(true);
+      if (publicState) setOpponents(publicState);
     });
 
     socket.on("your_turn", () => {
@@ -90,10 +94,10 @@ function App() {
       setMessage("Du bist am Zug!");
     });
 
-    socket.on("card_played", ({ cards, userId, pile, hand, faceUp, deckCount, revealed, pickedUp, faceDown }) => {
+    socket.on("card_played", ({ cards, userId, pile, hand, faceUp, deckCount, revealed, pickedUp, faceDown, publicState }) => {
       setPile(pile);
-      if (pile && pile.length > 0) {
-        // setFreeStart(false); // This state variable is not defined in the original file
+      if (pile && pile.length > 0 && typeof setFreeStart === 'function') {
+        // setFreeStart(false);
       }
       setSelectedPlayCards([]);
       if (userId === socket.id && hand) {
@@ -106,6 +110,7 @@ function App() {
         setFaceDown(faceDown);
         setSelectedFaceDownIndex(null);
       }
+      if (publicState) setOpponents(publicState);
       if (revealed) {
         setMessage(`Du hast eine verdeckte Karte aufgedeckt: ${revealed.value}${revealed.suit}${pickedUp ? ' (ungültig, Stapel aufgenommen!)' : ''}`);
       }
@@ -151,6 +156,10 @@ function App() {
       setTimeout(() => {
         window.location.reload();
       }, 2000);
+    });
+
+    socket.on("public_state", (state) => {
+      setOpponents(state || {});
     });
   }, [room]);
 
@@ -278,6 +287,34 @@ function App() {
                     style={{width: 90, height: 120, flexShrink: 0}} 
                     onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} 
                   />
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <h3 className="font-semibold">Gegner: Offene & Verdeckte Karten</h3>
+              <div style={{ display:'flex', gap: '8px', justifyContent:'center', alignItems:'center', flexWrap:'nowrap' }}>
+                {Object.entries(opponents).filter(([pid]) => pid !== socket.id).map(([pid, info]) => (
+                  <div key={pid} style={{ display:'flex', gap:'8px', alignItems:'center' }}>
+                    {/* Verdeckte Karten als Rückseiten mit Anzahl begrenzt */}
+                    <div style={{ display:'flex', gap:'4px', flexWrap:'nowrap' }}>
+                      {Array.from({ length: Math.min(info.faceDownCount || 0, 3) }).map((_, i) => (
+                        <img key={`opp-down-${i}`} src="/cards/Backsite.png" alt="Verdeckte Karte" style={{ width: 50, height: 70 }} />
+                      ))}
+                      {info.faceDownCount > 3 && (
+                        <span style={{ fontSize: 12, marginLeft: 4 }}>+{info.faceDownCount - 3}</span>
+                      )}
+                    </div>
+                    {/* Offene Karten des Gegners */}
+                    <div style={{ display:'flex', gap:'4px', flexWrap:'nowrap' }}>
+                      {(info.faceUp || []).slice(0, 5).map((card, i) => (
+                        <img key={`opp-up-${i}`} src={cardToImg(card)} alt={card.value + card.suit} style={{ width: 50, height: 70 }} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
+                      ))}
+                      {(info.faceUp || []).length > 5 && (
+                        <span style={{ fontSize: 12, marginLeft: 4 }}>+{(info.faceUp || []).length - 5}</span>
+                      )}
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>

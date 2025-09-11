@@ -38,11 +38,11 @@ app.get('/health', (req, res) => {
 
 app.get('/status', (req, res) => {
   console.log('Status request received');
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     port: PORT,
     clientUrl: CLIENT_URL,
-    timestamp: new Date().toISOString() 
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -173,6 +173,18 @@ function removeQuadsAndNotify(roomId, userId) {
   }
 }
 
+function buildPublicState(room) {
+  const state = {};
+  room.players.forEach(pid => {
+    const h = room.hands[pid];
+    state[pid] = {
+      faceUp: h.faceUp,
+      faceDownCount: h.faceDown.length
+    };
+  });
+  return state;
+}
+
 io.on("connection", (socket) => {
   console.log("User connected: " + socket.id);
 
@@ -190,13 +202,13 @@ io.on("connection", (socket) => {
         log: []
       };
     }
-    
+
     // Check if room is full (max 2 players)
     if (rooms[roomId].players.length >= 2 && !rooms[roomId].players.includes(socket.id)) {
       socket.emit("room_full", "Raum ist voll (maximal 2 Spieler)");
       return;
     }
-    
+
     if (!rooms[roomId].players.includes(socket.id)) {
       rooms[roomId].players.push(socket.id);
     }
@@ -279,7 +291,7 @@ io.on("connection", (socket) => {
         const cmp = cardValue(low0) - cardValue(low1) || (low0.suit < low1.suit ? -1 : 1);
         room.turn = cmp <= 0 ? 0 : 1;
       }
-      io.to(roomId).emit("start_game", room.hands);
+      io.to(roomId).emit("start_game", { hands: room.hands, publicState: buildPublicState(room) });
       io.to(room.players[room.turn]).emit("your_turn");
     }
   });
@@ -383,7 +395,8 @@ io.on("connection", (socket) => {
       pile: room.pile,
       hand: playerHand.hand,
       faceUp: playerHand.faceUp,
-      deckCount: room.deck.length
+      deckCount: room.deck.length,
+      publicState: buildPublicState(room)
     });
     // After every play, before emitting your_turn, remove quads and notify
     removeQuadsAndNotify(roomId, room.players[room.turn]);
@@ -396,6 +409,7 @@ io.on("connection", (socket) => {
     playerHand.hand.push(...room.pile);
     room.pile = [];
     io.to(roomId).emit("card_played", { cards: [], userId, pile: [], hand: playerHand.hand, deckCount: room.deck.length });
+    io.to(roomId).emit("public_state", buildPublicState(room));
     room.turn = (room.turn + 1) % 2;
     io.to(room.players[room.turn]).emit("your_turn");
   });
@@ -419,7 +433,8 @@ io.on("connection", (socket) => {
           faceUp: playerHand.faceUp,
           faceDown: playerHand.faceDown,
           deckCount: room.deck.length,
-          revealed: card
+          revealed: card,
+          publicState: buildPublicState(room)
         });
         // Check for pile clear (10 or quads)
         let tenPlayed = false;
@@ -459,7 +474,8 @@ io.on("connection", (socket) => {
           faceDown: playerHand.faceDown,
           deckCount: room.deck.length,
           revealed: card,
-          pickedUp: true
+          pickedUp: true,
+          publicState: buildPublicState(room)
         });
         room.turn = (room.turn + 1) % 2;
       }
@@ -494,7 +510,7 @@ io.on("connection", (socket) => {
         io.to(playerId).emit("force_disconnect", "Alle Spieler wurden getrennt");
         io.sockets.sockets.get(playerId)?.disconnect();
       });
-      
+
       // Reset room state
       rooms[roomId] = {
         players: [],
@@ -506,7 +522,7 @@ io.on("connection", (socket) => {
         discard: [],
         log: []
       };
-      
+
       io.to(roomId).emit("players_update", 0);
     }
   });
@@ -520,7 +536,7 @@ io.on("connection", (socket) => {
         io.to(playerId).emit("force_disconnect", "Alle Spieler wurden getrennt");
         io.sockets.sockets.get(playerId)?.disconnect();
       });
-      
+
       // Reset room state
       rooms[roomId] = {
         players: [],
@@ -532,7 +548,7 @@ io.on("connection", (socket) => {
         discard: [],
         log: []
       };
-      
+
       io.to(roomId).emit("players_update", 0);
     }
   });
@@ -555,7 +571,7 @@ server.listen(PORT, () => {
   console.log("Server listening on port " + PORT);
   console.log("Health check available at: http://localhost:" + PORT + "/ping");
   console.log("CORS configured to allow all origins");
-  
+
   // Connect to database after server starts
   connectDB().then(() => {
     console.log("Database connected successfully");
