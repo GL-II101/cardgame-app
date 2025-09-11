@@ -258,6 +258,27 @@ io.on("connection", (socket) => {
       room.players.forEach(pid => {
         room.hands[pid].mode = "hand";
       });
+      // Determine starting player based on the lowest card in hand
+      const [p0, p1] = room.players;
+      function lowestCard(cards) {
+        if (!cards || cards.length === 0) return null;
+        return [...cards].reduce((min, c) => {
+          if (!min) return c;
+          const cvMin = cardValue(min);
+          const cvC = cardValue(c);
+          if (cvC < cvMin) return c;
+          if (cvC > cvMin) return min;
+          // tie-breaker by suit lexicographically
+          return c.suit < min.suit ? c : min;
+        }, null);
+      }
+      const low0 = lowestCard(room.hands[p0].hand);
+      const low1 = lowestCard(room.hands[p1].hand);
+      // Fallback to existing turn if any issue
+      if (low0 && low1) {
+        const cmp = cardValue(low0) - cardValue(low1) || (low0.suit < low1.suit ? -1 : 1);
+        room.turn = cmp <= 0 ? 0 : 1;
+      }
       io.to(roomId).emit("start_game", room.hands);
       io.to(room.players[room.turn]).emit("your_turn");
     }
