@@ -90,8 +90,11 @@ function App() {
       setMessage("Du bist am Zug!");
     });
 
-    socket.on("card_played", ({ cards, userId, pile, hand, faceUp, deckCount, revealed, pickedUp }) => {
+    socket.on("card_played", ({ cards, userId, pile, hand, faceUp, deckCount, revealed, pickedUp, faceDown }) => {
       setPile(pile);
+      if (pile && pile.length > 0) {
+        // setFreeStart(false); // This state variable is not defined in the original file
+      }
       setSelectedPlayCards([]);
       if (userId === socket.id && hand) {
         setHand(hand);
@@ -99,13 +102,17 @@ function App() {
       if (userId === socket.id && faceUp) {
         setFaceUp(faceUp);
       }
+      if (userId === socket.id && Array.isArray(faceDown)) {
+        setFaceDown(faceDown);
+        setSelectedFaceDownIndex(null);
+      }
       if (revealed) {
         setMessage(`Du hast eine verdeckte Karte aufgedeckt: ${revealed.value}${revealed.suit}${pickedUp ? ' (ungültig, Stapel aufgenommen!)' : ''}`);
       }
       if (userId !== socket.id && cards && cards.length === 0) {
         setMessage("Stapel wurde aufgenommen!");
       } else if (userId !== socket.id && cards && cards.length > 0) {
-        setMessage(`Gegner hat ${cards.map(c => c.value + c.suit).join(", ")} gespielt.`);
+        setMessage(`Gegner hat ${cards.map(c => c.value + c.suit).join(", ") } gespielt.`);
       }
       setDeckCount(deckCount);
     });

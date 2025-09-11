@@ -396,6 +396,7 @@ io.on("connection", (socket) => {
           pile: room.pile,
           hand: playerHand.hand,
           faceUp: playerHand.faceUp,
+          faceDown: playerHand.faceDown,
           deckCount: room.deck.length,
           revealed: card
         });
@@ -434,6 +435,7 @@ io.on("connection", (socket) => {
           pile: [],
           hand: playerHand.hand,
           faceUp: playerHand.faceUp,
+          faceDown: playerHand.faceDown,
           deckCount: room.deck.length,
           revealed: card,
           pickedUp: true
