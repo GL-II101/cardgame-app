@@ -345,6 +345,7 @@ io.on("connection", (socket) => {
     if (cards[0].value === "10") {
       room.discard = room.pile.splice(0);
       io.to(roomId).emit("pile_cleared");
+      io.to(roomId).emit("discard_update", room.discard);
       tenPlayed = true;
     }
 
@@ -355,6 +356,7 @@ io.on("connection", (socket) => {
       if (lastFour.every(c => c.value === lastFour[0].value)) {
         room.discard = room.pile.splice(0);
         io.to(roomId).emit("pile_cleared");
+        io.to(roomId).emit("discard_update", room.discard);
         pileClearedByQuads = true;
       }
     }
@@ -441,6 +443,7 @@ io.on("connection", (socket) => {
         if (card.value === "10") {
           room.discard = room.pile.splice(0);
           io.to(roomId).emit("pile_cleared");
+          io.to(roomId).emit("discard_update", room.discard);
           tenPlayed = true;
         }
         let pileClearedByQuads = false;
@@ -449,6 +452,7 @@ io.on("connection", (socket) => {
           if (lastFour.every(c => c.value === lastFour[0].value)) {
             room.discard = room.pile.splice(0);
             io.to(roomId).emit("pile_cleared");
+            io.to(roomId).emit("discard_update", room.discard);
             pileClearedByQuads = true;
           }
         }
@@ -564,6 +568,13 @@ io.on("connection", (socket) => {
       }
     }
   });
+});
+
+// Return all removed cards on request
+socket.on("get_discard", ({ roomId }) => {
+  const room = rooms[roomId];
+  if (!room) return;
+  io.to(socket.id).emit("discard_update", room.discard || []);
 });
 
 // Start server immediately, then connect to database

@@ -57,6 +57,7 @@ function App() {
   const [selectedFaceDownIndex, setSelectedFaceDownIndex] = useState(null);
   const [showAllPileCards, setShowAllPileCards] = useState(false);
   const [opponents, setOpponents] = useState({});
+  const [removedCards, setRemovedCards] = useState([]);
 
   useEffect(() => {
     socket.emit("join_room", room);
@@ -157,6 +158,10 @@ function App() {
     socket.on("public_state", (state) => {
       setOpponents(state || {});
     });
+
+    socket.on("discard_update", (cards) => {
+      setRemovedCards(cards || []);
+    });
   }, [room]);
 
   const selectPlayer = (name) => {
@@ -227,6 +232,10 @@ function App() {
     socket.emit("play_facedown", { roomId: room, userId: socket.id, index: selectedFaceDownIndex });
     setTurn(false);
     setSelectedFaceDownIndex(null);
+  };
+
+  const requestRemovedCards = () => {
+    socket.emit("get_discard", { roomId: room });
   };
 
   return (
@@ -398,6 +407,16 @@ function App() {
                 </div>
               </div>
               <div className="mt-2 text-sm text-gray-600">Karten im Nachziehstapel: {deckCount}</div>
+              <div className="mt-2">
+                <button onClick={requestRemovedCards} className="btn btn-secondary">Entfernte Karten anzeigen</button>
+                {removedCards && removedCards.length > 0 && (
+                  <div className="mt-2" style={{ display:'flex', gap:'6px', flexWrap:'wrap', justifyContent:'center' }}>
+                    {removedCards.map((card, idx) => (
+                      <img key={`discard-${idx}`} src={cardToImg(card)} alt={card.value + card.suit} style={{ width: 50, height: 70 }} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="mt-4">
