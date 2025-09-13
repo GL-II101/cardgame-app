@@ -10,6 +10,16 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 3001;
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 
+// Configure CORS for Express app
+app.use(cors({
+  origin: true,
+  methods: ["GET", "POST", "OPTIONS"],
+  credentials: true
+}));
+
+// Parse JSON bodies
+app.use(express.json());
+
 console.log("Environment PORT:", process.env.PORT);
 console.log("Using PORT:", PORT);
 console.log("All environment variables:", Object.keys(process.env));
@@ -28,12 +38,6 @@ app.get('/health', (req, res) => {
 app.get('/ping', (req, res) => {
   console.log('Ping request received');
   res.send('pong');
-});
-
-// Additional health check endpoints
-app.get('/health', (req, res) => {
-  console.log('Health check request received');
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
 app.get('/status', (req, res) => {
