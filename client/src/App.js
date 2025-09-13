@@ -161,6 +161,10 @@ function App() {
 
     socket.on("discard_update", (cards) => {
       setRemovedCards(cards || []);
+      // Automatically show removed cards when they are updated
+      if (cards && cards.length > 0) {
+        setMessage(`Karten entfernt: ${cards.length} Karten aus dem Spiel genommen`);
+      }
     });
   }, [room]);
 
@@ -409,12 +413,14 @@ function App() {
               <div className="mt-2 text-sm text-gray-600">Karten im Nachziehstapel: {deckCount}</div>
               <div className="mt-2">
                 <button onClick={requestRemovedCards} className="btn btn-secondary">Entfernte Karten anzeigen</button>
-                {removedCards && removedCards.length > 0 && (
+                {removedCards && removedCards.length > 0 ? (
                   <div className="mt-2" style={{ display:'flex', gap:'6px', flexWrap:'wrap', justifyContent:'center' }}>
                     {removedCards.map((card, idx) => (
                       <img key={`discard-${idx}`} src={cardToImg(card)} alt={card.value + card.suit} style={{ width: 50, height: 70 }} onError={e => {e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.textContent=card.value+card.suit;}} />
                     ))}
                   </div>
+                ) : (
+                  <div className="mt-2 text-sm text-gray-500">Keine entfernten Karten</div>
                 )}
               </div>
             </div>
