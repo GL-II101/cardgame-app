@@ -443,7 +443,7 @@ function App() {
                       onClick={() => toggleSelect(card, selectingOpen ? "open" : "play")}
                       disabled={selectingOpen ? false : (
                         hand.length === 0 ? false : hand.indexOf(card) === -1
-                      ) || (!turn && !(pile.length === 0 && selectedPlayCards.length > 0 && selectedPlayCards.every(c => c.value === "4")))}
+                      ) || (!turn && !(pile.length === 0 && card.value === "4"))}
                       style={{
                         position: 'relative',
                         marginTop: isSelected ? '-20px' : '0',
